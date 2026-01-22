@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gundam-buyer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e14;
+            --bg-surface: #14191f;
+            --border: #2a2f38;
+            --text-primary: #e6e6e6;
+            --text-secondary: #6c7a89;
+            --text-tertiary: #4a5568;
+            --accent-primary: #39bae6;
+            --success: #0fa968;
+            --warning: #ffb454;
+            --error: #ff3864;
+            --active: #00d4ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 10px 12px;
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            transition: border-color 150ms ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(57, 186, 230, 0.2);
+        }
+
+        button {
+            background: var(--accent-primary);
+            color: #000;
+            border: 1px solid var(--accent-primary);
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: box-shadow 150ms ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 100%;
+        }
+
+        button:hover:not(:disabled) {
+            box-shadow: 0 0 12px rgba(57, 186, 230, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .log-container {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            padding: 16px;
+            height: 400px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            display: flex;
+        }
+
+        .log-timestamp {
+            color: var(--text-tertiary);
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .log-message {
+            color: var(--text-primary);
+        }
+
+        .log-entry.info .log-message {
+            color: var(--accent-primary);
+        }
+
+        .log-entry.success .log-message {
+            color: var(--success);
+        }
+
+        .log-entry.error .log-message {
+            color: var(--error);
+        }
+
+        .log-entry.warning .log-message {
+            color: var(--warning);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-idle {
+            background: var(--border);
+        }
+
+        .status-running {
+            background: var(--active);
+            box-shadow: 0 0 8px var(--active);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-complete {
+            background: var(--success);
+        }
+
+        .status-error {
+            background: var(--error);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .notice {
+            background: var(--bg-surface);
+            border-left: 2px solid var(--warning);
+            padding: 12px 12px 12px 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+        }
+
+        .notice strong {
+            color: var(--warning);
+        }
+
+        #status-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 8px 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        #status-text {
+            margin-left: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>gundam-buyer</h1>
+            <div class="subtitle">p-bandai automated checkout</div>
+        </header>
+
+        <div class="card">
+            <form id="purchase-form">
+                <div class="form-group">
+                    <label for="email">p-bandai email</label>
+                    <input type="email" id="email" required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">password</label>
+                    <input type="password" id="password" required autocomplete="current-password">
+                </div>
+
+                <div class="form-group">
+                    <label for="product_url">product url</label>
+                    <input type="url" id="product_url" value="https://p-bandai.com/us/item/F2845054001" required>
+                </div>
+
+                <button type="submit" id="start-btn">→ start</button>
+            </form>
+
+            <div class="notice">
+                <strong>⚠ important:</strong> pre-save payment & shipping info in your p-bandai account before using this
+            </div>
+        </div>
+
+        <div class="card">
+            <div id="status-bar">
+                <span class="status-indicator status-idle" id="status-indicator"></span>
+                <span id="status-text">idle</span>
+            </div>
+            <div class="log-container" id="log-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('purchase-form');
+        const startBtn = document.getElementById('start-btn');
+        const logContainer = document.getElementById('log-container');
+        const statusIndicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+
+        let eventSource = null;
+
+        function addLog(timestamp, message, level = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${level}`;
+
+            const ts = document.createElement('span');
+            ts.className = 'log-timestamp';
+            ts.textContent = `[${timestamp}]`;
+
+            const msg = document.createElement('span');
+            msg.className = 'log-message';
+            msg.textContent = message;
+
+            entry.appendChild(ts);
+            entry.appendChild(msg);
+            logContainer.appendChild(entry);
+
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function updateStatus(status) {
+            statusIndicator.className = `status-indicator status-${status}`;
+            statusText.textContent = status;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const product_url = document.getElementById('product_url').value;
+
+            logContainer.innerHTML = '';
+
+            startBtn.disabled = true;
+            startBtn.textContent = '→ running...';
+            updateStatus('running');
+
+            try {
+                const response = await fetch('/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password, product_url })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to start purchase');
+                }
+
+                const data = await response.json();
+                const sessionId = data.session_id;
+
+                eventSource = new EventSource(`/logs/${sessionId}`);
+
+                eventSource.onmessage = (event) => {
+                    const log = JSON.parse(event.data);
+
+                    if (log.ping) {
+                        return;
+                    }
+
+                    if (log.error) {
+                        addLog('--:--:--', log.error, 'error');
+                        updateStatus('error');
+                        startBtn.disabled = false;
+                        startBtn.textContent = '→ start';
+                        eventSource.close();
+                        return;
+                    }
+
+                    addLog(log.timestamp, log.message, log.level);
+
+                    if (log.message === 'COMPLETE') {
+                        updateStatus('complete');
+                        startBtn.disabled = false;
+                        startBtn.textContent = '→ start';
+                        eventSource.close();
+                    }
+
+                    if (log.level === 'error') {
+                        updateStatus('error');
+                        startBtn.disabled = false;
+                        startBtn.textContent = '→ start';
+                        eventSource.close();
+                    }
+                };
+
+                eventSource.onerror = () => {
+                    addLog('--:--:--', 'Connection lost', 'error');
+                    updateStatus('error');
+                    startBtn.disabled = false;
+                    startBtn.textContent = '→ start';
+                    eventSource.close();
+                };
+
+            } catch (error) {
+                addLog('--:--:--', `Error: ${error.message}`, 'error');
+                updateStatus('error');
+                startBtn.disabled = false;
+                startBtn.textContent = '→ start';
+            }
+        });
+    </script>
+</body>
+</html>
